@@ -1,0 +1,64 @@
+.welcome-header {
+    display: flex;
+    top: 0px;
+    right: 0px;
+    justify-content: flex-end;
+}
+
+.contacts-container, .messages-container, .channels-container {
+    border: 2px solid #000; /* Ramka o grubości 2px i kolorze czarnym */
+    margin: 0.5%;
+    padding: 0.5%;
+	float:left;
+	height:90%
+}
+
+.contacts-container, .channels-container {
+width:20%
+}
+.messages-container{
+	width: 53%
+}
+
+.form-box button {
+    width: calc(100% - 20px); /* Szerokość z uwzględnieniem paddingu */
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+.action-button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+    width: calc(100% - 20px); /* Szerokość z uwzględnieniem paddingu */
+}
+#messagesDisplay
+{
+	
+	 padding: 10px;
+    margin: 10px 0;
+	width: calc(100% - 20px);
+	height:80%
+}
+#messageInput
+{
+	height:10%;
+	width: calc(100% - 5px);
+}
+
+#sendMessageBtn
+{
+height: 5%;
+width:calc(100% - 5px);
+}

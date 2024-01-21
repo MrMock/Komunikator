@@ -1,0 +1,73 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.form-box {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    min-width: 300px;
+    text-align: center;
+}
+
+.form-box input[type="text"], 
+.form-box input[type="password"], 
+.form-box input[type="email"], 
+.form-box button {
+    width: calc(100% - 20px); /* Szerokość z uwzględnieniem paddingu */
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.action-button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+    width: calc(100% - 20px); /* Szerokość z uwzględnieniem paddingu */
+}
+
+.action-button:hover {
+    background-color: #45a049;
+}
+
+.error-message {
+    color: red;
+    margin-bottom: 10px;
+}
+
+.welcome-header {
+    display: flex;
+    top: 0px;
+    right: 0px;
+    justify-content: flex-end;
+}
+
+.action-button {
+    margin: 10px; 
+}
+
+.contacts-container, .messages-container {
+    border: 2px solid #000; /* Ramka o grubości 2px i kolorze czarnym */
+    margin: 10px;
+    padding: 10px;
+}
