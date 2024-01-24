@@ -14,10 +14,15 @@
 }
 
 .contacts-container, .channels-container {
-width:20%
+	width:20%;
+    overflow-y: auto;  /* Włącz przewijanie pionowe, gdy zawartość jest za długa */
+    overflow-x: hidden; /* Zapobiegaj poziomemu przewijaniu */
 }
 .messages-container{
-	width: 53%
+	width: 53%;
+	   
+    overflow-y: auto;  /* Włącz przewijanie pionowe, gdy zawartość jest za długa */
+    overflow-x: hidden; /* Zapobiegaj poziomemu przewijaniu */
 }
 
 .form-box button {
@@ -61,4 +66,46 @@ width:20%
 {
 height: 5%;
 width:calc(100% - 5px);
+}
+
+.channel-button {
+    width: 90%;           /* 90% szerokości kontenera */
+    margin: 5px auto;     /* Centrowanie przycisku i dodanie marginesu */
+    display: block;       /* Wyświetlanie jako blok, aby zająć całą linię */
+
+    /* Przykład stylów przycisku "Wyloguj" */
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    background-color: #4CAF50; /* Przykładowy kolor tła */
+    color: white;              /* Kolor tekstu */
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    transition-duration: 0.4s;
+}
+
+.channel-button:hover {
+    background-color: #45a049; /* Kolor tła podczas najechania */
+}
+
+.channel-button.selected {
+    background-color: #333; /* Kolor tła dla wybranego kanału */
+    color: white;
+}
+
+#leaveChannelButton {
+    display: none; /* domyślnie ukryty */
+    /* inne style przycisku, np. klasy .action-button */
+}
+
+.message {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.message-id, .message-date, .message-content {
+    margin-bottom: 5px;
 }
