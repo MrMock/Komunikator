@@ -41,7 +41,7 @@ session_start();
             <!-- Tutaj pojawią się wiadomości -->
         </div>
         <textarea id="messageInput" class="message-input" placeholder="Wpisz wiadomość"></textarea>
-        <button id="sendMessageBtn" class="action-button" onclick="sendMessage()">Wyślij</button>
+        <button id="sendMessageBtn" class="action-button" >Wyślij</button>
     </div>
 
 		
@@ -49,6 +49,6 @@ session_start();
         <!-- Tutaj pojawi się lista kontaktów -->
     </div>
 </div>
-</html>
+
 </body>
 </html>
