@@ -2,6 +2,7 @@ var username = "kamil";
 var hostUrl = "wss://webapp-oiihp.ondigitalocean.app";
 var socket;
 var currentChannelId, currentPublicChannelId;
+var userChannels = [];
 
 function setupWebSocket() {
     // Tworzenie URL z uwzględnieniem tokena dostępu i innych parametrów
@@ -40,6 +41,7 @@ socket.onclose = function(event) {
 
 
 
+
 function fetchPublicChannels() {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "https://webapp-oiihp.ondigitalocean.app/api/channels/public", true);
@@ -47,27 +49,20 @@ function fetchPublicChannels() {
 
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 && xhr.status == 200) {
-            var channels = JSON.parse(xhr.responseText);
-            displayChannels(channels, 'publicChannels');
+            var publicChannels = JSON.parse(xhr.responseText).channels;
+            // Filtrowanie kanałów publicznych, aby nie zawierały kanałów użytkownika
+            var filteredPublicChannels = publicChannels.filter(function(publicChannel) {
+                return !userChannels.some(function(userChannel) {
+                    return userChannel.id === publicChannel.id;
+                });
+            });
+
+            displayChannels({ channels: filteredPublicChannels }, 'publicChannels');
         }
     };
     xhr.send();
 }
 
-function displayChannels(channelsData, containerId) {
-    var container = document.getElementById(containerId);
-    container.innerHTML = '';
-    channelsData.channels.forEach(function(channel) {
-        var channelButton = document.createElement('button');
-        channelButton.textContent = channel.name;
-        channelButton.classList.add('channel-button');
-        channelButton.setAttribute('data-channel-id', channel.id);
-        channelButton.addEventListener('click', function() {
-            selectChannel(channel.id, containerId === 'publicChannels');
-        });
-        container.appendChild(channelButton);
-    });
-}
 
 function displayChannels(channelsData, containerId) {
     var container = document.getElementById(containerId);
@@ -75,6 +70,12 @@ function displayChannels(channelsData, containerId) {
     var isPublicChannel = containerId === 'publicChannels';
 
     channelsData.channels.forEach(function(channel) {
+        // Sprawdź, czy kanał publiczny jest już w kanałach użytkownika
+        if (isPublicChannel && userChannels.includes(channel.id)) {
+            // Pomijaj kanały, które są już w kanałach użytkownika
+            return;
+        }
+
         var channelButton = document.createElement('button');
         channelButton.textContent = channel.name;
         channelButton.classList.add('channel-button', isPublicChannel ? 'public-channel' : 'user-channel');
@@ -108,49 +109,57 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
-
 function selectPublicChannel(channelId) {
-    // Usuń zaznaczenie z poprzednio wybranego publicznego kanału
+    // Odznacz wszystkie kanały użytkownika
+    var userChannels = document.querySelectorAll('.user-channel.selected');
+    userChannels.forEach(function(channel) {
+        channel.classList.remove('selected');
+    });
+
+    // Zaznacz wybrany publiczny kanał
     var previouslySelectedPublic = document.querySelector('.public-channel.selected');
     if (previouslySelectedPublic) {
         previouslySelectedPublic.classList.remove('selected');
     }
 
-    // Zaznacz aktualnie wybrany publiczny kanał
     var selectedPublicChannel = document.querySelector('.public-channel[data-channel-id="' + channelId + '"]');
     if (selectedPublicChannel) {
         selectedPublicChannel.classList.add('selected');
     }
-	    document.getElementById('messagesDisplay').innerHTML = ''; // Czyszczenie wiadomości
-    fetchChannelMessages(channelId);
-	fetchChannelMessages(channelId);
+
+    document.getElementById('messagesDisplay').innerHTML = '';
 }
 
 function selectUserChannel(channelId) {
-    // Usuń zaznaczenie z poprzednio wybranego kanału użytkownika
-    var previouslySelected = document.querySelector('.user-channel.selected');
-    if (previouslySelected) {
-        previouslySelected.classList.remove('selected');
+    // Odznacz wszystkie kanały publiczne
+    var publicChannels = document.querySelectorAll('.public-channel.selected');
+    publicChannels.forEach(function(channel) {
+        channel.classList.remove('selected');
+    });
+
+    // Zaznacz wybrany kanał użytkownika
+    var previouslySelectedUser = document.querySelector('.user-channel.selected');
+    if (previouslySelectedUser) {
+        previouslySelectedUser.classList.remove('selected');
     }
 
-    // Zaznacz aktualnie wybrany kanał użytkownika
-    var selectedChannel = document.querySelector('.user-channel[data-channel-id="' + channelId + '"]');
-    if (selectedChannel) {
-        selectedChannel.classList.add('selected');
+    var selectedUserChannel = document.querySelector('.user-channel[data-channel-id="' + channelId + '"]');
+    if (selectedUserChannel) {
+        selectedUserChannel.classList.add('selected');
     }
 
+    document.getElementById('messagesDisplay').innerHTML = '';
+    currentChannelId = channelId; 
 
-	var selectedChannel = document.querySelector('.user-channel[data-channel-id="' + channelId + '"]');
-    if (selectedChannel) {
-        selectedChannel.classList.add('selected');
-    }
-	    document.getElementById('messagesDisplay').innerHTML = ''; // Czyszczenie wiadomości
+    // Pobierz wiadomości tylko dla kanału użytkownika
     fetchChannelMessages(channelId);
-	 fetchChannelMessages(channelId);
-    // Wyświetl przycisk "Opuść kanał" i ukryj przycisk "Kopiuj ID kanału"
-    document.getElementById('leaveChannelButton').style.display = 'block';
-    document.getElementById('copyChannelIdButton').style.display = 'none';
-    currentChannelId = channelId; // Zapisz ID wybranego kanału użytkownika
+
+    // Jeśli połączenie WebSocket jest otwarte, dołącz do wybranego pokoju
+    if (socket.readyState === WebSocket.OPEN) {
+        joinRoom(channelId);
+    } else {
+        console.error("Połączenie WebSocket nie jest otwarte.");
+    }
 }
 
 function fetchUserChannels() {
@@ -159,22 +168,13 @@ function fetchUserChannels() {
     xhr.setRequestHeader("x-access-token", accessToken);
 
     xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4) {
-            if (xhr.status == 200) {
-                try {
-                    var channels = JSON.parse(xhr.responseText);
-                    displayChannels(channels, 'userChannels');
-                } catch (e) {
-                    console.error("Błąd podczas przetwarzania odpowiedzi JSON: ", e);
-                }
-            } else {
-                console.error("Błąd przy pobieraniu kanałów użytkownika: ", xhr.status, xhr.responseText);
-            }
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            userChannels = JSON.parse(xhr.responseText).channels; // Aktualizacja listy kanałów użytkownika
+            displayChannels({ channels: userChannels }, 'userChannels');
         }
     };
     xhr.send();
 }
-
 function joinChannel() {
     var channelId = document.getElementById('channelId').value;
     var channelPassword = document.getElementById('channelPassword').value;
@@ -219,9 +219,17 @@ function selectChannel(channelId, isPublicChannel) {
         selectedChannel.classList.add('selected');
     }
 
-    currentChannelId = channelId;
-    document.getElementById('messagesDisplay').innerHTML = '';
-    fetchChannelMessages(channelId);
+    currentChannelId = channelId; // aktualizacja aktualnie wybranego ID kanału
+    document.getElementById('messagesDisplay').innerHTML = ''; // czyszczenie wiadomości
+    fetchChannelMessages(channelId); // pobieranie wiadomości kanału
+
+    // Sprawdzenie, czy połączenie z WebSocket jest otwarte przed dołączeniem do pokoju
+    if (socket.readyState === WebSocket.OPEN) {
+        joinRoom(channelId); // Dołączanie do pokoju
+    } else {
+        console.error("Połączenie WebSocket nie jest otwarte. Nie można dołączyć do pokoju.");
+    }
+
 
     var displayState = isPublicChannel ? 'none' : 'block';
     document.getElementById('leaveChannelButton').style.display = displayState;
@@ -333,4 +341,19 @@ function displayReceivedMessage(message) {
         '<div class="message-date">' + new Date(message.createdAt).toLocaleString() + '</div>' +
         '<div class="message-content">' + message.content + '</div>';
     messagesContainer.appendChild(messageDiv);
+}
+
+function joinRoom(channelId) {
+    if (socket.readyState === WebSocket.OPEN && channelId) {
+        var joinData = {
+            username: username,
+            room: channelId
+        };
+        socket.send(JSON.stringify(joinData));
+        console.log("Wysłano dane dołączenia do pokoju:", joinData);
+    } else if (!channelId) {
+        console.error("Brak ID pokoju do dołączenia.");
+    } else {
+        console.error("Połączenie WebSocket nie jest otwarte.");
+    }
 }

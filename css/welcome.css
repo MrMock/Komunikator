@@ -4,7 +4,9 @@
     right: 0px;
     justify-content: flex-end;
 }
-
+body {
+    font-family: 'Monospace', monospace;
+}
 .contacts-container, .messages-container, .channels-container {
     border: 2px solid #000; /* Ramka o grubości 2px i kolorze czarnym */
     margin: 0.5%;
@@ -15,12 +17,13 @@
 
 .contacts-container, .channels-container {
 	width:20%;
+	height: 84%;
     overflow-y: auto;  /* Włącz przewijanie pionowe, gdy zawartość jest za długa */
     overflow-x: hidden; /* Zapobiegaj poziomemu przewijaniu */
 }
 .messages-container{
 	width: 53%;
-	   
+	  height: 84%;
     overflow-y: auto;  /* Włącz przewijanie pionowe, gdy zawartość jest za długa */
     overflow-x: hidden; /* Zapobiegaj poziomemu przewijaniu */
 }
@@ -50,22 +53,28 @@
 }
 #messagesDisplay
 {
-	
 	 padding: 10px;
     margin: 10px 0;
 	width: calc(100% - 20px);
 	height:80%
 }
+
+#messageInputContainer {
+	height:12%;
+	width: 100%;
+}
+
 #messageInput
 {
-	height:10%;
+	height:60%;
 	width: calc(100% - 5px);
 }
 
 #sendMessageBtn
 {
-height: 5%;
+height: 40%;
 width:calc(100% - 5px);
+
 }
 
 .channel-button {

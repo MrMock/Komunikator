@@ -14,9 +14,6 @@ session_start();
 <title>Witaj w komunikatorze</title>
 </head>
 <body>
-<div class="welcome-header">
-    <button id="logoutBtn" class="action-button" onclick="window.location.href='logout.php'">Wyloguj</button>
-</div>
 
 <div id="mainContainer">
 
@@ -39,16 +36,23 @@ session_start();
     <div id="messagesSection" class="messages-container">
         <div id="messagesDisplay" class="messages-display">
             <!-- Tutaj pojawią się wiadomości -->
-        </div>
-        <textarea id="messageInput" class="message-input" placeholder="Wpisz wiadomość"></textarea>
-        <button id="sendMessageBtn" class="action-button" >Wyślij</button>
+
     </div>
+        </div>
 
 		
 		<div id="contactsSection" class="contacts-container">
+		<div class="welcome-header">
+    <button id="logoutBtn" class="action-button" onclick="window.location.href='logout.php'">Wyloguj</button>
+</div>
+
         <!-- Tutaj pojawi się lista kontaktów -->
     </div>
 </div>
+		<div id="messageInputContainer" class="messageInputContainer">
+        <textarea id="messageInput" class="message-input" placeholder="Wpisz wiadomość"></textarea>
+        <button id="sendMessageBtn" class="action-button" >Wyślij</button>
+		</div>
 
 </body>
 </html>
